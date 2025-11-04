@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -32,8 +33,6 @@ int main() {
 
     string linia;
     while(plik) {
-        size_t nastepnaKrawedz = 0;
-
         if (!getline(plik, linia)) break;
         int liczba_krawedzi = 0;
 
@@ -42,27 +41,15 @@ int main() {
         int wierzcholek = stoi(linia.substr(0, obecnaPozycja));
         wierzcholki[wierzcholek - 1].id = wierzcholek;
         liczbaWierzcholkow++;
-        obecnaPozycja += 2;
 
-        while (obecnaPozycja < linia.length()) {
-            size_t nastepnaKrawedz = linia.find(' ', obecnaPozycja);
-            if (nastepnaKrawedz == string::npos) {
-                int krawedz = stoi(linia.substr(obecnaPozycja));
-                if(liczba_krawedzi >= 20){
-                    cout << "Graf nie jest sprzezony" << endl;
-                    return 0;
-                }
-                wierzcholki[wierzcholek - 1].krawedzie[liczba_krawedzi++] = krawedz;
-                break;
-            } else {
-                int krawedz = stoi(linia.substr(obecnaPozycja, nastepnaKrawedz - obecnaPozycja));
-                if(liczba_krawedzi >= 20){
-                    cout << "Graf nie jest sprzezony. Krawedzie wielokrotne." << endl;
-                    return 0;
-                }
-                wierzcholki[wierzcholek - 1].krawedzie[liczba_krawedzi++] = krawedz;
-                obecnaPozycja = nastepnaKrawedz + 1;
+        istringstream iss(linia.substr(obecnaPozycja + 1));
+        int krawedz;
+        while (iss >> krawedz) {
+            if (liczba_krawedzi >= 20){
+                cout << "Graf nie jest sprzezony. Krawedzie wielokrotne." << endl;
+                return 0;
             }
+            wierzcholki[wierzcholek - 1].krawedzie[liczba_krawedzi++] = krawedz;
         }
 
         for (int i = 0; i < 20; i++) {
